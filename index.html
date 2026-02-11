@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup</title>
+    <style>
+        @font-face {
+            font-family: 'Burbank';
+            src: url('BurbankBigCondensed-Black.otf') format('opentype');
+            font-weight: 900;
+        }
+
+        :root {
+            --accent-yellow: #f7e017;
+            --accent-blue: #00ebff;
+            --accent-purple: #bf40bf;
+            --accent-green: #00ff6a;
+            --glass: rgba(15, 15, 15, 0.9);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background: #050505;
+            background-image: 
+                radial-gradient(circle at 50% -20%, #22004a 0%, transparent 50%),
+                radial-gradient(circle at 0% 100%, #001a33 0%, transparent 40%),
+                url('https://www.transparenttextures.com/patterns/carbon-fibre.png'); /* Carbon vibe */
+            color: white;
+            font-family: 'Burbank', 'Impact', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            z-index: 1;
+            transform: skew(-2deg); /* To "najetý" zkosení */
+        }
+
+        h1 {
+            font-size: 5rem;
+            text-align: center;
+            margin: 0 0 30px 0;
+            text-transform: uppercase;
+            font-style: italic;
+            line-height: 0.8;
+            letter-spacing: -3px;
+            background: linear-gradient(to bottom, #fff 40%, #888 100%);
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.8));
+        }
+
+        /* --- TLAČÍTKA (PŘESNĚ TEN STYL CO CHCEŠ) --- */
+        .card {
+            cursor: pointer;
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--glass-border);
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+            clip-path: polygon(0 0, 100% 0, 98% 100%, 2% 100%);
+            text-decoration: none;
+            color: white;
+        }
+
+        /* Spodní zářící linka při hoveru */
+        .card::after {
+            content: "";
+            position: absolute;
+            left: 0; bottom: 0; width: 100%; height: 4px;
+            background: var(--color);
+            box-shadow: 0 0 15px var(--color);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        .card:hover::after { transform: scaleX(1); }
+
+        .smarty { --color: var(--accent-yellow); }
+        .gear { --color: var(--accent-blue); }
+        .pc { --color: var(--accent-purple); }
+        .stream { --color: var(--accent-green); }
+
+        .icon-box {
+            width: 50px; height: 50px;
+            display: flex; justify-content: center; align-items: center;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .icon-box svg {
+            width: 32px; height: 32px;
+            fill: var(--color);
+            filter: drop-shadow(0 0 8px var(--color)); /* Glow ikonky */
+        }
+
+        .label { display: flex; flex-direction: column; }
+        .title { font-size: 1.8rem; text-transform: uppercase; letter-spacing: -1px; line-height: 1; }
+        .subtitle { font-size: 0.8rem; opacity: 0.5; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+        .live-dot {
+            width: 8px; height: 8px;
+            background: #ff0000;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
+        /* --- POPUP / MODAL (FUTURISTIC) --- */
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(15px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal {
+            background: rgba(10, 10, 10, 0.95);
+            border: 2px solid var(--m-color);
+            width: 90%; max-width: 500px;
+            clip-path: polygon(2% 0, 100% 0, 98% 100%, 0% 100%);
+            animation: popIn 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            box-shadow: 0 0 40px rgba(0,0,0,0.8);
+        }
+
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .modal-header {
+            background: var(--m-color);
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: black;
+        }
+
+        .modal-header h2 { margin: 0; font-style: italic; text-transform: uppercase; font-size: 2rem; }
+
+        .modal-content {
+            padding: 25px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .product-item {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-transform: uppercase;
+            font-size: 1.2rem;
+        }
+
+        .item-accent { color: var(--m-color); font-weight: bold; }
+
+    </style>
+    <style>
+        @font-face {
+            font-family: 'Burbank';
+            src: url('BurbankBigCondensed-Black.otf') format('opentype');
+            font-weight: 900;
+        }
+
+        :root {
+            --accent-yellow: #ffff00;
+            --accent-blue: #00ebff;
+            --accent-purple: #bf40bf;
+            --accent-green: #00ff6a;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background: #050505;
+            background-image: 
+                radial-gradient(circle at 50% -20%, #22004a 0%, transparent 50%),
+                radial-gradient(circle at 0% 100%, #001a33 0%, transparent 40%);
+            color: white;
+            font-family: 'Burbank', 'Impact', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animované pozadí pro moderní look */
+        body::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        h1 {
+            font-size: 5rem;
+            text-align: center;
+            margin: 0 0 30px 0;
+            text-transform: uppercase;
+            font-style: italic;
+            line-height: 0.8;
+            letter-spacing: -3px;
+            background: linear-gradient(to bottom, #fff 40%, #888 100%);
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.8));
+        }
+
+        .card {
+            position: relative;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 24px;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+            clip-path: polygon(0 0, 100% 0, 98% 100%, 2% 100%); /* Moderní "slanted" look */
+        }
+
+        .card::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--color);
+            box-shadow: 0 0 15px var(--color);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px) scale(1.02);
+            border-color: var(--color);
+        }
+
+        .card:hover::after {
+            transform: scaleX(1);
+        }
+
+        /* Specifické barvy */
+        .smarty { --color: magenta; }
+        .gear { --color: var(--accent-blue); }
+        .pc { --color: var(--accent-yellow); }
+        .stream { --color: var(--accent-green); }
+
+        .icon-box {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+        }
+
+        .icon-box svg {
+            width: 32px;
+            height: 32px;
+            fill: var(--color);
+            filter: drop-shadow(0 0 5px var(--color));
+        }
+
+        .smarty-img {
+            width: 80px;
+            height: auto;
+            filter: brightness(0) invert(1); /* Udělá logo bílé pro lepší vibe */
+        }
+
+        .label {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .title {
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            line-height: 1;
+        }
+
+        .subtitle {
+            font-size: 0.8rem;
+            opacity: 0.5;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        /* "Live" efekt pro stream */
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #ff0000;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .copy-btn {
+            background: var(--m-color);
+            color: black;
+            border: none;
+            font-family: 'Burbank', sans-serif;
+            font-size: 0.9rem;
+            padding: 5px 12px;
+            cursor: pointer;
+            text-transform: uppercase;
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+            transition: transform 0.1s, filter 0.2s;
+            flex-shrink: 0;
+        }
+
+        .copy-btn:hover {
+            filter: brightness(1.2);
+            transform: scale(1.1);
+        }
+
+        .copy-btn:active {
+            transform: scale(0.9);
+        }
+
+        .copy-btn.copied {
+            background: white;
+        }
+
+        p {
+            font-size: x-small;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%) skew(-2deg); /* Zkosení, aby to sedělo ke stylu */
+            width: 100%;
+            text-align: center;
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.3); /* Decentní barva */
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            z-index: 5;
+        }
+
+        .license-footer a {
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: underline;
+            pointer-events: auto; /* Odkaz ale fungovat musí */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>mychal<br>SETUP</h1>
+
+        <a href="https://ehub.cz/system/scripts/click.php?a_aid=36524c04&a_bid=1651aa06" target="_blank" class="card smarty">
+            <div class="icon-box">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Smarty_logo.png/960px-Smarty_logo.png" alt="Smarty" style="width: 95%; filter: brightness(0) invert(1);">
+            </div>
+            <div class="label">
+                <span class="title">SMARTY.cz</span>
+                <span class="subtitle">Podpoř mě nákupem</span>
+            </div>
+        </a>
+
+        <div class="card gear" onclick="openM('modal-gear')">
+            <div class="icon-box">
+                <svg viewBox="0 0 24 24"><path d="M20,7H4C2.89,7 2,7.89 2,9V15A2,2 0 0,0 4,17H20A2,2 0 0,0 22,15V9C22,7.89 21.1,7 20,7M20,15H4V9H20V15M5,10H7V12H5V10M8,10H10V12H8V10M11,10H13V12H11V10M14,10H16V12H14V10M17,10H19V12H17V10M5,13H19V14H5V13Z"/></svg>
+            </div>
+            <div class="label">
+                <span class="title">PERIFERIE</span>
+                <span class="subtitle">Myš, klávesnice, monitor</span>
+            </div>
+        </div>
+
+        <div class="card pc" onclick="openM('modal-pc')">
+            <div class="icon-box">
+                <svg viewBox="0 0 24 24"><path d="M18,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V4A2,2 0 0,0 18,2M15,4V10H9V4H15M9,12H15V14H9V12M9,16H15V18H9V16Z"/></svg>
+            </div>
+            <div class="label">
+                <span class="title">HERNÍ PC</span>
+                <span class="subtitle">Vnitřnosti mé mašiny</span>
+            </div>
+        </div>
+
+        <div class="card stream" onclick="openM('modal-stream')">
+            <div class="icon-box">
+                <svg viewBox="0 0 24 24"><path d="M17,10.5V7A1,1 0 0,0 16,6H4A1,1 0 0,0 3,7V17A1,1 0 0,0 4,18H16A1,1 0 0,0 17,17V13.5L21,17.5V6.5L17,10.5Z"/></svg>
+            </div>
+            <div class="label">
+                <span class="title">STREAM VYBAVENÍ</span>
+                <span class="subtitle"><span class="live-dot"></span>Vybavení pro live</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-gear" class="overlay" onclick="closeM(event, 'modal-gear')">
+        <div class="modal" style="--m-color: #00ebff;">
+            <div class="modal-header"><h2>VYBAVENÍ</h2><span>✕</span></div>
+            <div class="modal-content">
+                <div class="product-item"><span>Razer Cobra Pro</span><button class="copy-btn" onclick="copyT('Razer Cobra Pro', this)">KOPÍROVAT</button></div>
+                <div class="product-item"><span>Razer Huntsman Mini, Optical Red</span><button class="copy-btn" onclick="copyT('Razer Huntsman Mini, Optical Red', this)">KOPÍROVAT</button></div>
+                <div class="product-item"><span>Rapture RESPAWN 3XL černá</span><button class="copy-btn" onclick="copyT('Rapture RESPAWN 3XL černá', this)">KOPÍROVAT</button></div>
+                <div class="product-item"><span>beyerdynamic DT 990 PRO 80 Ohm</span><button class="copy-btn" onclick="copyT('beyerdynamic DT 990 PRO 80 Ohm', this)">KOPÍROVAT</button></div>
+                <div class="product-item"><span>MSI G255F (HLAVNÍ MONITOR)</span><button class="copy-btn" onclick="copyT('MSI G255F', this)">KOPÍROVAT</button></div>
+                <div class="product-item"><span>MSI G24C4 E2 (VEDLEJŠÍ MONITOR)</span><button class="copy-btn" onclick="copyT('MSI G24C4 E2', this)">KOPÍROVAT</button></div>
+                <div class="product-item"><span>AlzaErgo Arm D35B</span><button class="copy-btn" onclick="copyT('AlzaErgo Arm D35B', this)">KOPÍROVAT</button></div>
+                <div class="product-item"><span>AlzaErgo Arm SE10 Pylon</span><button class="copy-btn" onclick="copyT('AlzaErgo Arm SE10 Pylon', this)">KOPÍROVAT</button></div>
+                <div class="product-item"><span>AlzaErgo Table ET4 AiO 140×70</span><button class="copy-btn" onclick="copyT('AlzaErgo Table ET4 AiO 140×70', this)">KOPÍROVAT</button></div>
+
+                <div class="product-item"><span>iPhone 15 128GB černá</span><button class="copy-btn" onclick="copyT('iPhone 15 128GB černá', this)">KOPÍROVAT</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-pc" class="overlay" onclick="closeM(event, 'modal-pc')">
+        <div class="modal" style="--m-color: #f7e017;">
+            <div class="modal-header"><h2>KOMPONENTY</h2><span>✕</span></div>
+            <div class="modal-content">
+                <div class="product-item"><span>AMD Ryzen 7 7700</span><button class="copy-btn" onclick="copyT('AMD Ryzen 7 7700', this)">KOPÍROVAT</button></div>
+                <div class="product-item"><span>RTX 4070 Gainward Ghost OC</span><button class="copy-btn" onclick="copyT('RTX 4070 Gainward Ghost OC', this)">KOPÍROVAT</button></div>
+                <div class="product-item"><span>Patriot Viper Venom 32GB DDR5</span><button class="copy-btn" onclick="copyT('Patriot Viper Venom 32GB DDR5 6000MHz', this)">KOPÍROVAT</button></div>
+                <div class="product-item"><span>ASUS TUF GAMING B650M-E WIFI</span><button class="copy-btn" onclick="copyT('ASUS TUF GAMING B650M-E WIFI', this)">KOPÍROVAT</button></div>
+                <div class="product-item"><span>MSI MAG CORELIQUID A13 240</span><button class="copy-btn" onclick="copyT('MSI MAG CORELIQUID A13 240', this)">KOPÍROVAT</button></div>
+                <div class="product-item"><span>WD Black SN770 NVMe 1TB</span><button class="copy-btn" onclick="copyT('WD Black SN770 NVMe 1TB', this)">KOPÍROVAT</button></div>
+                <div class="product-item"><span>GIGABYTE P650G</span><button class="copy-btn" onclick="copyT('GIGABYTE P650G', this)">KOPÍROVAT</button></div>
+                <div class="product-item"><span>ARCTIC P12 PWM PST</span><button class="copy-btn" onclick="copyT('ARCTIC P12 PWM PST', this)">KOPÍROVAT</button></div>
+                <div class="product-item"><span>ADATA XPG Valor Air Black</span><button class="copy-btn" onclick="copyT('ADATA XPG Valor Air Black', this)">KOPÍROVAT</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-stream" class="overlay" onclick="closeM(event, 'modal-stream')">
+        <div class="modal" style="--m-color: #00ff6a;">
+            <div class="modal-header"><h2>STREAM RIG</h2><span>✕</span></div>
+            <div class="modal-content">
+                <div class="product-item"><span>ASUS TUF Gaming A15 (FA507XI)</span><button class="copy-btn" onclick="copyT('ASUS TUF Gaming A15 (FA507XI)', this)">KOPÍROVAT</button></div>
+                <div class="product-item"><span>HyperX DuoCast</span><button class="copy-btn" onclick="copyT('HyperX DuoCast', this)">KOPÍROVAT</button></div>
+                <div class="product-item"><span>KRUX Arm 200s</span><button class="copy-btn" onclick="copyT('KRUX Arm 200s', this)">KOPÍROVAT</button></div>
+                <div class="product-item"><span>Razer Cynosa V2</span><button class="copy-btn" onclick="copyT('Razer Cynosa V2', this)">KOPÍROVAT</button></div>
+                <div class="product-item"><span>Razer DeathAdder V2 Pro</span><button class="copy-btn" onclick="copyT('Razer DeathAdder V2 Pro', this)">KOPÍROVAT</button></div>
+                <div class="product-item"><span>PremiumCord HDMI capture card</span><button class="copy-btn" onclick="copyT('PremiumCord HDMI capture', this)">KOPÍROVAT</button></div>
+                <div class="product-item"><span>ASUS VE247H (STREAM MONITOR)</span><button class="copy-btn" onclick="copyT('ASUS VE247H', this)">KOPÍROVAT</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openM(id) { document.getElementById(id).style.display = 'flex'; }
+        
+        function closeM(e, id) { 
+            if(e.target.id === id || e.target.tagName === 'SPAN') {
+                document.getElementById(id).style.display = 'none'; 
+            }
+        }
+
+        function copyT(text, btn) {
+            navigator.clipboard.writeText(text);
+            const originalText = btn.innerText;
+            btn.innerText = 'HOTOVO!';
+            btn.classList.add('copied');
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.classList.remove('copied');
+            }, 1000);
+        }
+    </script>
+</body>
+<footer>
+  <p>
+    „Smarty logo“ od SmartyBrands (Smarty CZ a.s.), použito pod licencí 
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.cs" target="_blank">CC BY-SA 4.0</a>. 
+    Původní barvy byly upraveny pro účely designu webu.
+  </p>
+</footer>
+</html>
