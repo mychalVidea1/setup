@@ -413,6 +413,22 @@
             text-decoration: underline;
             pointer-events: auto; /* Odkaz ale fungovat musí */
         }
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 3.5rem; /* Menší nadpis na mobilu, aby nezabíral půlku displaye */
+                margin-bottom: 20px;
+            }
+
+            .container {
+                justify-content: flex-start; /* Na mobilu tlačíme věci odshora */
+            }
+        
+            p {
+                font-size: 0.6rem;
+                opacity: 0.5;
+                margin-top: 30px;
+            }
+        }
     </style>
 </head>
 <body>
