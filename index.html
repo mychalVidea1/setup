@@ -203,15 +203,18 @@
             background: #050505;
             background-image: 
                 radial-gradient(circle at 50% -20%, #22004a 0%, transparent 50%),
-                radial-gradient(circle at 0% 100%, #001a33 0%, transparent 40%);
+                radial-gradient(circle at 0% 100%, #001a33 0%, transparent 40%),
+                url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
             color: white;
             font-family: 'Burbank', 'Impact', sans-serif;
             margin: 0;
             display: flex;
-            justify-content: center;
+            flex-direction: column; /* Změna pro scroll */
             align-items: center;
-            min-height: 100vh;
+            min-height: 100vh; /* Povolí růst stránky */
             overflow-x: hidden;
+            overflow-y: auto; /* Povolí scroll na mobilu */
+            padding: 40px 0; /* Trochu místa nahoře a dole */
         }
 
         /* Animované pozadí pro moderní look */
@@ -226,12 +229,14 @@
         }
 
         .container {
-            width: 100%;
+            width: 90%;
             max-width: 420px;
-            padding: 20px;
             display: flex;
             flex-direction: column;
             gap: 16px;
+            z-index: 1;
+            transform: skew(-2deg);
+            flex-shrink: 0; /* Aby se container nedeformoval */
         }
 
         h1 {
@@ -386,6 +391,8 @@
         }
 
         p {
+            position: relative; /* Už neletí nad obsahem */
+            margin-top: 50px; /* Mezera od posledního tlačítka */
             font-size: x-small;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             position: absolute;
